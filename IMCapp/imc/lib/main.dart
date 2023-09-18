@@ -1,125 +1,229 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    title: "BFCalc",
+    theme: ThemeData(
+      primarySwatch: Colors.indigo,
+    ),
+    home: CalculadoraBFApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class CalculadoraBFApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+  _CalculadoraBFAppState createState() => _CalculadoraBFAppState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
+class _CalculadoraBFAppState extends State<CalculadoraBFApp> {
+  TextEditingController pesoController = TextEditingController();
+  TextEditingController alturaController = TextEditingController();
+  TextEditingController pescocoController = TextEditingController();
+  TextEditingController cinturaController = TextEditingController();
+  TextEditingController quadrilController = TextEditingController();
+  TextEditingController sexoController = TextEditingController();
+  TextEditingController resultadoBFController = TextEditingController();
+  TextEditingController resultadoIMCController = TextEditingController();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String resultadoBF = '';
+  String resultadoIMC = "";
+  void _resetCampos() {
+    _formKey.currentState!.reset();
+    pesoController.clear();
+    alturaController.clear();
+    pescocoController.clear();
+    cinturaController.clear();
+    quadrilController.clear();
+    sexoController.clear();
+    resultadoBFController.clear();
+    resultadoIMCController.clear();
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      resultadoBF = '';
+      resultadoIMC = '';
+    });
+  }
+
+  double log10(num x) {
+    return log(x) / ln10;
+  }
+
+  void calcularBF() {
+    double peso = double.parse(pesoController.text);
+    double altura = double.parse(alturaController.text);
+    double pescoco = double.tryParse(pescocoController.text) ?? 0;
+    double cintura = double.tryParse(cinturaController.text) ?? 0;
+    double quadril = double.tryParse(quadrilController.text) ?? 0;
+    double bf;
+    if (sexoController.text == 'M' || sexoController.text == 'm') {
+      bf = 86.010 * log10((cintura / 2.54) - (pescoco / 2.54)) -
+          70.041 * log10(altura / 2.54) +
+          36.76;
+    } else {
+      bf = 86.010 *
+              log10((cintura / 2.54) + (quadril / 2.54) - (pescoco / 2.54)) -
+          97.684 * log10(altura / 2.54) +
+          78.387;
+    }
+
+    double imc = peso / ((altura / 100) * (altura / 100));
+    setState(() {
+      resultadoBF = 'O seu percentual de gordura é: ${bf.toStringAsFixed(2)}%';
+      resultadoIMC = 'O seu IMC é: ${imc.toStringAsFixed(2)}';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+        backgroundColor: Colors.indigo,
+        title: Text("BFcalc"),
+        centerTitle: true,
+        leading: Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Icon(Icons.account_circle), // Ícone de usuário
+                ],
+              ),
             ),
           ],
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _resetCampos,
+          )
+        ], //<Widget>[]
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(20.0),
+        child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  decoration: InputDecoration(
+                      labelText: "Sexo(M/F)",
+                      labelStyle: TextStyle(color: Colors.indigo)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                  controller: sexoController,
+                  validator: (value) {
+                    if (value!.isEmpty)
+                      return "Insira seu sexo!";
+                    else
+                      return null;
+                  },
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "Peso (kg)",
+                      labelStyle: TextStyle(color: Colors.indigo)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                  controller: pesoController,
+                  validator: (value) {
+                    if (value!.isEmpty)
+                      return "Insira seu peso!";
+                    else
+                      return null;
+                  },
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "Altura (cm)",
+                      labelStyle: TextStyle(color: Colors.indigo)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                  controller: alturaController,
+                  validator: (value) {
+                    if (value!.isEmpty)
+                      return "Insira sua altura!";
+                    else
+                      return null;
+                  },
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "Circuferência do pescoço (cm)",
+                      labelStyle: TextStyle(color: Colors.indigo)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                  controller: pescocoController,
+                  validator: (value) {
+                    if (value!.isEmpty)
+                      return "Insira seu pescoço!";
+                    else
+                      return null;
+                  },
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "Insira a medida da sua cintura (cm)",
+                      labelStyle: TextStyle(color: Colors.indigo)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                  controller: cinturaController,
+                  validator: (value) {
+                    if (value!.isEmpty)
+                      return "Insira a medida da sua cintura!";
+                    else
+                      return null;
+                  },
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "insira a medida do seu quadril (cm)",
+                      labelStyle: TextStyle(color: Colors.indigo)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                  controller: quadrilController,
+                  validator: (value) {
+                    if (value!.isEmpty)
+                      return "Insira a medida do seu quadril!";
+                    else
+                      return null;
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                  child: ButtonTheme(
+                      height: 50.0,
+                      highlightColor: Colors.white,
+                      buttonColor: Colors.amber,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) calcularBF();
+                        },
+                        child: Text(
+                          "Calcular",
+                          style:
+                              TextStyle(color: Colors.indigo, fontSize: 25.0),
+                        ),
+                      )),
+                ),
+                Text(
+                  resultadoBF,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                ),
+                Text(
+                  resultadoIMC,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.indigo, fontSize: 25.0),
+                )
+              ],
+            )),
+      ),
     );
   }
 }
