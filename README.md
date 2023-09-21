@@ -7,4 +7,4 @@ App contador:
 
 App calculadora:
 
-![image](https://github.com/GuilhermeHermes/DPDM/assets/85593021/b9698ee8-f338-49f4-8025-d3daff30fb3f)
+![image](https://github.com/GuilhermeHermes/DPDM/assets/85593021/c7a8eeba-69ec-4ce6-9a3d-4171da89cb9a)
