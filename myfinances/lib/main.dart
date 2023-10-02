@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
   // Variáveis para armazenar as seleções do usuário
   String moedaOrigem = 'Real';
   String moedaDestino = 'Real';
-
+  int chooseController = 0;
   // Controladores de texto para as entradas do usuário
   final realController = TextEditingController();
   final dolarController = TextEditingController();
@@ -155,22 +155,13 @@ class _HomeState extends State<Home> {
                   TextField(
                     controller: dolarController,
                     decoration: InputDecoration(
-                      labelText: 'Valor em Dólares',
+                      labelText: 'Valor em $moedaDestino',
                     ),
                     onChanged: (text) {
                       // Lógica de conversão inversa, se necessário
                     },
                   ),
                   SizedBox(height: 20),
-                  TextField(
-                    controller: euroController,
-                    decoration: InputDecoration(
-                      labelText: 'Valor em Euros',
-                    ),
-                    onChanged: (text) {
-                      // Lógica de conversão inversa, se necessário
-                    },
-                  ),
                 ],
               ),
             );
